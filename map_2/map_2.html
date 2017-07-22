@@ -35,10 +35,6 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
 
 
 
-
-
-
-
 // drawing on canvas layer from https://github.com/Sumbera/gLayers.Leaflet
 var data = dataset;
 
@@ -98,13 +94,11 @@ d3.csv(datafile, function(data){
 		data.forEach(function(d) {
 
 			// 1. Some data is missing Location values, so have to test for it, and replace with something. --> might want to remove these records
-
 			if(d['Location']  == ""){
 				d['Location'] = "(0,0)"
 			}
 
 
-			// have to change this, as location is all caps in old code
 			d.loc = strToLocation(d['Location']);
 			
 			try{
