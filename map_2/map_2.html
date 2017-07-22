@@ -40,7 +40,6 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
 
 
 // drawing on canvas layer from https://github.com/Sumbera/gLayers.Leaflet
-//var data = [[37.77139, -122.44486]];
 var data = dataset;
 
 var canvasLayer = L.canvasLayer()
@@ -48,32 +47,23 @@ var canvasLayer = L.canvasLayer()
             .addTo(mymap);
       
 function onDrawLayer(info) {
-    //console.log("draw ")
-    //console.log(info.zoom)
     var dotSize = 10/info.zoom
-    var alpha = .9;  //0.2 + (info.zoom/100)*3;
-    //console.log(alpha)
+    var alpha = 0.2 + (info.zoom/100)*3;
+   
     var ctx = info.canvas.getContext('2d');
     ctx.clearRect(0, 0, info.canvas.width, info.canvas.height);
     
-
     console.log('data size: ', dataset.length);
 
     for (var i = 0; i < dataset.length; i++) {
 
     	var d = dataset[i];
-    	//console.log(d['qSpecies'])
 
     	// let's try showing just the plum trees
     	if( d['qSpecies'].indexOf('Plum') >=0 ){
 
-    	// console.log('plum')
-
 	    	if (info.bounds.contains([d.loc[0], d.loc[1]])) {
 
-	    		// ctx.fillStyle = "rgba(" + d.color[0] + "," + d.color[1] + "," + d.color[2] + "," + alpha + ")";
-
-	    		//ctx.fillStyle = "rgba(0,100,0,.5)";
 	    		ctx.fillStyle = "rgba(99, 140, 129, .5)";
 	    		
 	            dot = info.layer._map.latLngToContainerPoint([d.loc[0], d.loc[1]]);
@@ -90,8 +80,6 @@ function onDrawLayer(info) {
 };
 
 
-
-
 function strToLocation(s){
 		var arr = s.slice(1,-1).split(',');
 		arr[0] = parseFloat(arr[0]);
@@ -100,58 +88,24 @@ function strToLocation(s){
 	}
 
 
-	capColors = {
-		"Grey": {"hex":'#999', "rgb": [153, 153, 153]},
-		"Green": {"hex": '#FF0', "rgb": [31, 168, 31]},
-		"Yellow": {"hex":'yellow', "rgb": [255, 255, 0]},
-		"Black": {"hex": 'black', "rgb": [20, 20, 20]},
-		"Red": {"hex": 'red', "rgb": [206, 8, 8]},
-		"Brown": {"hex": 'brown', "rgb": [112, 86, 20]},
-		"Purple": {"hex": 'purple', "rgb": [61, 20, 112]},
-		"Undefined": {"hex": '#ccc', "rgb": (204, 204, 204)}
-
-	}
-
-	function getCapColor(d){
-		return capColors[d['CAP_COLOR']];
-	}
-
 // Get data
-// var datafile = "Street_Tree_List_sm.csv"; 
 var datafile = "Street_Tree_List.csv"; 
 var dataset = [];
 d3.csv(datafile, function(data){
 
 		species = d3.map(data, function(d){return d['qSpecies'];}).keys()
-		//console.log(species)
-		//console.log(species.length)
-
-		// ids = d3.map(data, function(d){return d['RATEAREA'];}).keys()
-		// console.log(ids);
-
-		// caps = d3.map(data, function(d){return d['CAP_COLOR']}).keys();
-		// console.log(caps)
-
 
 		data.forEach(function(d) {
-
-			//console.log("-------------------")
-			// console.log(d)
-			//console.log(d['Location'])
 
 			// 1. Some data is missing Location values, so have to test for it, and replace with something. --> might want to remove these records
 
 			if(d['Location']  == ""){
-				//console.log(' missing *****')
 				d['Location'] = "(0,0)"
 			}
 
 
 			// have to change this, as location is all caps in old code
 			d.loc = strToLocation(d['Location']);
-			// d.loc = strToLocation(d['LOCATION']);
-			//console.log(d.loc)
-
 			
 			try{
 				d.LatLng = new L.LatLng(d.loc[0], d.loc[1]);
@@ -160,19 +114,10 @@ d3.csv(datafile, function(data){
 
 			}
 
-
-			// d.color = getCapColor(d).rgb
-			
-
-			//d.color = getColor(d, ids);
-			//var i = ids.indexOf(d['RATEAREA'])
-
-			//console.log(d.loc, d.color)
 		})
 
 		dataset = data;
 		canvasLayer.drawLayer();
-
 
 })
 
